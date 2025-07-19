@@ -20,13 +20,15 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket         = var.terraform_state_bucket
-    key            = "rancher-platform/terraform.tfstate"
-    region         = var.aws_region
-    encrypt        = true
-    dynamodb_table = var.terraform_lock_table
-  }
+  # Backend configuration should be set via terraform init -backend-config
+  # or use a separate backend.tf file
+  # backend "s3" {
+  #   bucket         = "your-terraform-state-bucket"
+  #   key            = "rancher-platform/terraform.tfstate"
+  #   region         = "us-west-2"
+  #   encrypt        = true
+  #   dynamodb_table = "terraform-state-lock"
+  # }
 }
 
 # Configure the AWS Provider
