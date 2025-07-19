@@ -1,0 +1,82 @@
+{
+  "name": "rancher-deployment-platform",
+  "version": "1.0.0",
+  "description": "A comprehensive Rancher deployment platform with CI/CD integration",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/ --ext .js,.ts",
+    "lint:fix": "eslint src/ --ext .js,.ts --fix",
+    "format": "prettier --write src/",
+    "build": "docker build -t rancher-platform .",
+    "deploy:staging": "helm upgrade --install rancher-app ./helm-charts/rancher-app --namespace staging --create-namespace",
+    "deploy:prod": "helm upgrade --install rancher-app ./helm-charts/rancher-app --namespace production --create-namespace",
+    "terraform:init": "cd terraform && terraform init",
+    "terraform:plan": "cd terraform && terraform plan",
+    "terraform:apply": "cd terraform && terraform apply",
+    "docker:build": "docker build -t ghcr.io/rancher-platform:latest .",
+    "docker:push": "docker push ghcr.io/rancher-platform:latest",
+    "helm:lint": "helm lint helm-charts/rancher-app/",
+    "helm:template": "helm template rancher-app helm-charts/rancher-app/",
+    "k8s:apply": "kubectl apply -f manifests/",
+    "k8s:delete": "kubectl delete -f manifests/",
+    "setup": "npm install && npm run terraform:init",
+    "clean": "rm -rf node_modules/ dist/ coverage/"
+  },
+  "keywords": [
+    "rancher",
+    "kubernetes",
+    "deployment",
+    "platform",
+    "devops",
+    "ci-cd",
+    "infrastructure",
+    "helm",
+    "terraform"
+  ],
+  "author": "DevOps Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "dotenv": "^16.3.1",
+    "winston": "^3.10.0",
+    "kubernetes-client": "^9.0.0",
+    "axios": "^1.5.0",
+    "prometheus-client": "^14.2.0",
+    "joi": "^17.9.2",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "node-cron": "^3.0.2",
+    "compression": "^1.7.4"
+  },
+  "devDependencies": {
+    "jest": "^29.6.4",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.0.1",
+    "eslint": "^8.47.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.28.1",
+    "prettier": "^3.0.2",
+    "@types/jest": "^29.5.4",
+    "@types/node": "^20.5.1",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/rancher-deployment-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/rancher-deployment-platform/issues"
+  },
+  "homepage": "https://github.com/your-org/rancher-deployment-platform#readme"
+}

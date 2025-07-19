@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rancher-app.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "rancher-app.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with (include "rancher-app.annotations" .) }}
+    {{- . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort | default "http" }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "rancher-app.selectorLabels" . | nindent 4 }}
