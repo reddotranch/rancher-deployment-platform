@@ -410,16 +410,14 @@ resource "aws_s3_bucket_versioning" "velero" {
   }
 }
 
-resource "aws_s3_bucket_encryption" "velero" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "velero" {
   count = var.enable_velero ? 1 : 0
 
   bucket = aws_s3_bucket.velero[0].id
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
 }
