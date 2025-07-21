@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
@@ -100,28 +101,37 @@ app.use(rateLimiter);
 // Prometheus metrics collection
 app.use(prometheus.middleware);
 
+// Serve static files from public directory
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Routes
 app.use('/health', healthRoutes);
 app.use('/api/v1', authMiddleware, apiRoutes);
 app.use('/api/v1/rancher', authMiddleware, rancherRoutes);
 app.use('/metrics', monitoringRoutes);
 
-// Root route
+// Root route - serve UI or API response based on Accept header
 app.get('/', (req, res) => {
-  res.json({
-    name: 'Rancher Deployment Platform',
-    version: process.env.npm_package_version || '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
-    status: 'running',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    features: {
-      monitoring: process.env.ENABLE_MONITORING === 'true',
-      backup: process.env.ENABLE_BACKUP === 'true',
-      security: process.env.ENABLE_SECURITY_SCAN === 'true',
-      autoScaling: process.env.ENABLE_AUTO_SCALING === 'true'
-    }
-  });
+  // If the request accepts HTML (browser), serve the UI
+  if (req.accepts('html') && !req.accepts('json')) {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  } else {
+    // Otherwise, serve JSON API response
+    res.json({
+      name: 'Rancher Deployment Platform',
+      version: process.env.npm_package_version || '1.0.0',
+      environment: process.env.NODE_ENV || 'development',
+      status: 'running',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      features: {
+        monitoring: process.env.ENABLE_MONITORING === 'true',
+        backup: process.env.ENABLE_BACKUP === 'true',
+        security: process.env.ENABLE_SECURITY_SCAN === 'true',
+        autoScaling: process.env.ENABLE_AUTO_SCALING === 'true'
+      }
+    });
+  }
 });
 
 // 404 handler
@@ -181,24 +191,31 @@ function initializeScheduledTasks() {
   appLogger.info('Scheduled tasks initialized');
 }
 
+// Global server reference
+let httpServer = null;
+
 // Graceful shutdown
 function gracefulShutdown(signal) {
   appLogger.info(`Received ${signal}, shutting down gracefully...`);
   
-  server.close(() => {
-    appLogger.info('HTTP server closed');
-    
-    // Close database connection
-    database.disconnect()
-      .then(() => {
-        appLogger.info('Database connection closed');
-        process.exit(0);
-      })
-      .catch((error) => {
-        appLogger.error('Error closing database connection:', error);
-        process.exit(1);
-      });
-  });
+  if (httpServer) {
+    httpServer.close(() => {
+      appLogger.info('HTTP server closed');
+      
+      // Close database connection
+      database.disconnect()
+        .then(() => {
+          appLogger.info('Database connection closed');
+          process.exit(0);
+        })
+        .catch((error) => {
+          appLogger.error('Error closing database connection:', error);
+          process.exit(1);
+        });
+    });
+  } else {
+    process.exit(0);
+  }
 
   // Force close after 30 seconds
   setTimeout(() => {
@@ -217,7 +234,7 @@ async function startServer() {
     initializeScheduledTasks();
     
     // Start HTTP server
-    const server = app.listen(PORT, '0.0.0.0', () => {
+    httpServer = app.listen(PORT, '0.0.0.0', () => {
       appLogger.info(`Rancher Deployment Platform server started on port ${PORT}`, {
         environment: process.env.NODE_ENV,
         version: process.env.npm_package_version || '1.0.0',
@@ -229,7 +246,7 @@ async function startServer() {
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
     process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
-    return server;
+    return httpServer;
   } catch (error) {
     appLogger.error('Failed to start server:', error);
     process.exit(1);

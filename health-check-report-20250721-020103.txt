@@ -1,0 +1,34 @@
+# Rancher Deployment Platform Health Check Report
+# Generated on Mon Jul 21 02:01:03 UTC 2025
+
+## Summary
+Total Checks: 15
+Passed: 15
+Failed: 0
+Success Rate: 100%
+
+## System Information
+Hostname: ip-172-31-17-134
+Operating System: Linux
+Kernel Version: 6.8.0-1031-aws
+Architecture: x86_64
+
+## Docker Information
+28.2.2
+
+## Kubernetes Information
+kubectl not configured
+
+## Cluster Nodes
+Cluster not accessible
+
+## Running Pods
+Pods not accessible
+
+## Services
+Services not accessible
+
+## Recommendations
+- All checks passed successfully!
+- System is healthy and ready for production use.
+- Consider setting up monitoring alerts for proactive monitoring.

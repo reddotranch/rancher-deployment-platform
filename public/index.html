@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rancher Deployment Platform</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-cubes"></i>
+                    <h1>Rancher Deployment Platform</h1>
+                </div>
+                <div class="status-indicator">
+                    <span id="status-dot" class="status-dot"></span>
+                    <span id="status-text">Checking...</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav">
+            <button class="nav-btn active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="nav-btn" data-tab="clusters">
+                <i class="fas fa-server"></i> Clusters
+            </button>
+            <button class="nav-btn" data-tab="deployments">
+                <i class="fas fa-rocket"></i> Deployments
+            </button>
+            <button class="nav-btn" data-tab="monitoring">
+                <i class="fas fa-chart-line"></i> Monitoring
+            </button>
+            <button class="nav-btn" data-tab="logs">
+                <i class="fas fa-file-alt"></i> Logs
+            </button>
+            <button class="nav-btn" data-tab="health">
+                <i class="fas fa-heartbeat"></i> Health
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <h2>Platform Overview</h2>
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-server"></i>
+                            <h3>System Status</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="metric">
+                                <span class="metric-label">Uptime:</span>
+                                <span id="uptime" class="metric-value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Environment:</span>
+                                <span id="environment" class="metric-value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Version:</span>
+                                <span id="version" class="metric-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-memory"></i>
+                            <h3>Resource Usage</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="metric">
+                                <span class="metric-label">Memory:</span>
+                                <span id="memory" class="metric-value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Heap:</span>
+                                <span id="heap" class="metric-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="fas fa-database"></i>
+                            <h3>Services</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="metric">
+                                <span class="metric-label">Database:</span>
+                                <span id="database-status" class="metric-value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Redis:</span>
+                                <span id="redis-status" class="metric-value">-</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Monitoring:</span>
+                                <span id="monitoring-status" class="metric-value">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clusters Tab -->
+            <div id="clusters" class="tab-content">
+                <h2>Kubernetes Clusters</h2>
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="refreshClusters()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-success" onclick="createCluster()">
+                        <i class="fas fa-plus"></i> Create Cluster
+                    </button>
+                </div>
+                <div id="clusters-list" class="clusters-grid">
+                    <!-- Clusters will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Deployments Tab -->
+            <div id="deployments" class="tab-content">
+                <h2>Deployments</h2>
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="refreshDeployments()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-success" onclick="createDeployment()">
+                        <i class="fas fa-rocket"></i> New Deployment
+                    </button>
+                </div>
+                <div id="deployments-list" class="table-container">
+                    <!-- Deployments will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Monitoring Tab -->
+            <div id="monitoring" class="tab-content">
+                <h2>Monitoring & Metrics</h2>
+                <div class="monitoring-links">
+                    <div class="monitoring-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Prometheus</h3>
+                        <p>Metrics collection and monitoring</p>
+                        <a href="http://localhost:9090" target="_blank" class="btn btn-primary">
+                            Open Prometheus
+                        </a>
+                    </div>
+                    <div class="monitoring-card">
+                        <i class="fas fa-chart-area"></i>
+                        <h3>Grafana</h3>
+                        <p>Dashboards and visualization</p>
+                        <a href="http://localhost:3000" target="_blank" class="btn btn-primary">
+                            Open Grafana
+                        </a>
+                    </div>
+                    <div class="monitoring-card">
+                        <i class="fas fa-search"></i>
+                        <h3>Jaeger</h3>
+                        <p>Distributed tracing</p>
+                        <a href="http://localhost:16686" target="_blank" class="btn btn-primary">
+                            Open Jaeger
+                        </a>
+                    </div>
+                    <div class="monitoring-card">
+                        <i class="fas fa-database"></i>
+                        <h3>Kibana</h3>
+                        <p>Log analysis and search</p>
+                        <a href="http://localhost:5601" target="_blank" class="btn btn-primary">
+                            Open Kibana
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs Tab -->
+            <div id="logs" class="tab-content">
+                <h2>Application Logs</h2>
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearLogs()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+                <div id="logs-container" class="logs-container">
+                    <pre id="logs-content">Loading logs...</pre>
+                </div>
+            </div>
+
+            <!-- Health Tab -->
+            <div id="health" class="tab-content">
+                <h2>Health Check</h2>
+                <div class="toolbar">
+                    <button class="btn btn-primary" onclick="runHealthCheck()">
+                        <i class="fas fa-play"></i> Run Health Check
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadHealthReport()">
+                        <i class="fas fa-download"></i> Download Report
+                    </button>
+                </div>
+                <div id="health-results" class="health-results">
+                    <!-- Health check results will be displayed here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

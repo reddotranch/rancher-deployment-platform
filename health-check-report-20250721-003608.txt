@@ -1,0 +1,35 @@
+# Rancher Deployment Platform Health Check Report
+# Generated on Mon Jul 21 00:36:08 UTC 2025
+
+## Summary
+Total Checks: 15
+Passed: 13
+Failed: 2
+Success Rate: 86%
+
+## System Information
+Hostname: ip-172-31-17-134
+Operating System: Linux
+Kernel Version: 6.8.0-1031-aws
+Architecture: x86_64
+
+## Docker Information
+28.2.2
+
+## Kubernetes Information
+kubectl not configured
+
+## Cluster Nodes
+Cluster not accessible
+
+## Running Pods
+Pods not accessible
+
+## Services
+Services not accessible
+
+## Recommendations
+- 2 checks failed. Review the output above for details.
+- Check logs for failed components: kubectl logs <pod-name> -n <namespace>
+- Verify resource availability: kubectl describe node
+- Check events: kubectl get events --all-namespaces

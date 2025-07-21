@@ -33,7 +33,6 @@ RUN apk add --no-cache dumb-init
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/package*.json ./
 COPY --from=builder --chown=nextjs:nodejs /app/src ./src
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public || echo "No public directory"
 
 # Create necessary directories
 RUN mkdir -p /app/logs /app/data && \

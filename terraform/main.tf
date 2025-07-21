@@ -103,7 +103,7 @@ resource "aws_subnet" "private" {
 resource "aws_eip" "nat" {
   count = length(aws_subnet.public)
 
-  domain = "vpc"
+  domain     = "vpc"
   depends_on = [aws_internet_gateway.main]
 
   tags = {
@@ -396,13 +396,13 @@ resource "aws_db_subnet_group" "main" {
 resource "aws_db_instance" "main" {
   count = var.create_rds ? 1 : 0
 
-  identifier     = "${var.project_name}-db-${var.environment}"
-  engine         = "mysql"
-  engine_version = "8.0"
-  instance_class = var.rds_instance_class
+  identifier        = "${var.project_name}-db-${var.environment}"
+  engine            = "mysql"
+  engine_version    = "8.0"
+  instance_class    = var.rds_instance_class
   allocated_storage = var.rds_allocated_storage
   storage_encrypted = true
-  kms_key_id = aws_kms_key.rds[0].arn
+  kms_key_id        = aws_kms_key.rds[0].arn
 
   db_name  = var.database_name
   username = var.database_username
@@ -412,8 +412,8 @@ resource "aws_db_instance" "main" {
   db_subnet_group_name   = aws_db_subnet_group.main.name
 
   backup_retention_period = var.environment == "production" ? 30 : 7
-  backup_window          = "03:00-04:00"
-  maintenance_window     = "sun:04:00-sun:05:00"
+  backup_window           = "03:00-04:00"
+  maintenance_window      = "sun:04:00-sun:05:00"
 
   skip_final_snapshot = var.environment != "production"
   deletion_protection = var.environment == "production"
